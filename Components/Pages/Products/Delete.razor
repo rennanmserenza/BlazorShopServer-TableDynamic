@@ -1,0 +1,82 @@
+﻿@page "/products/delete/{id:int}"
+
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<h1>Excluir - @Model.Title</h1>
+
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label for="@Model.Title" class="col-form-label">Título</label>
+            <InputText @bind-Value="Model.Title" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label for="@Model.Description" class="col-form-label">Descrição do Produto</label>
+            <InputText @bind-Value="Model.Description" class="form-control" readonly />
+            <ValidationMessage For="@(() => Model.Description)" /> <!-- Exibe apenas a validação do campo -->
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="@Model.Price" class="col-form-label">Preço do Produto</label>
+            <InputNumber @bind-Value="Model.Price" class="form-control" readonly />
+            <ValidationMessage For="@(() => Model.Price)" /> <!-- Exibe apenas a validação do campo -->
+        </div>
+
+        <div class="col-md-6">
+            <label for="@Model.CategoryId" class="col-form-label">Categoria</label>
+            <InputSelect @bind-Value="Model.CategoryId" class="form-control" readonly>
+                <option value="">Selecione uma categoria</option>  <!-- Opção padrão -->
+                @foreach (var category in _categories)
+                {
+                    <option value="@category.Id">@category.Title</option>  <!-- Exibe o ID e nome da categoria -->
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => Model.CategoryId)" /> <!-- Exibe apenas a validação do campo -->
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-secondary" onclick="@(() => NavigateBack())">Voltar</button>
+        </div>        
+        <div class="col-md-6 d-flex justify-content-end">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; } = 0;
+
+    private List<Category> _categories { get; set; } = [];
+    public Product Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await Context.Categories.AsNoTracking().ToListAsync();
+        var prod = await Context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+        if (prod is not null)
+            Model = prod;
+    }
+
+    public async Task OnValidSubmitAsync()
+    {
+        Context.Products.Remove(Model);
+        await Context.SaveChangesAsync();
+        NavigateBack();
+    }
+
+    public void NavigateBack()
+    {
+        Navigation.NavigateTo("products");
+    }
+}

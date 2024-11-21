@@ -1,0 +1,34 @@
+﻿@if (TotalItems == 0)
+{
+    <p>Exibindo @TotalItems @ElementName</p>
+}
+else
+{
+    <p>Exibindo @Start - @End de @TotalItems @ElementName</p>
+}
+
+@code {
+    /// <summary>
+    /// Nome do elemento exibido (plural).
+    /// </summary>
+    [Parameter]
+    public string ElementName { get; set; }
+
+    /// <summary>
+    /// Índice inicial dos elementos exibidos.
+    /// </summary>
+    [Parameter]
+    public int Start { get; set; }
+
+    /// <summary>
+    /// Índice final dos elementos exibidos.
+    /// </summary>
+    [Parameter]
+    public int End { get; set; }
+
+    /// <summary>
+    /// Total de elementos disponíveis.
+    /// </summary>
+    [Parameter]
+    public int TotalItems { get; set; }
+}

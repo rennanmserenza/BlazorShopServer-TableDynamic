@@ -1,0 +1,52 @@
+﻿<div class="row mb-2">
+    <div class="col-4">
+        <PaginationInfo ElementName="@ElementName" Start="@Start" End="@End" TotalItems="@TotalItems" />
+    </div>
+    <div class="col-4">
+        <DynamicPagination TotalItems="@TotalItems" ItemsPerPage="@ItemsPerPage" CurrentPage="@CurrentPage" OnPageChanged="OnPageChanged" />
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Nome do elemento exibido (plural).
+    /// </summary>
+    [Parameter]
+    public string ElementName { get; set; } = "elementos";
+
+    /// <summary>
+    /// Índice inicial dos elementos exibidos.
+    /// </summary>
+    [Parameter]
+    public int Start { get; set; } = 0;
+
+    /// <summary>
+    /// Índice final dos elementos exibidos.
+    /// </summary>
+    [Parameter]
+    public int End { get; set; } = 0;
+
+    /// <summary>
+    /// Total de itens na tabela.
+    /// </summary>
+    [Parameter]
+    public int TotalItems { get; set; } = 0;
+
+    /// <summary>
+    /// Número de itens por página.
+    /// </summary>
+    [Parameter]
+    public int ItemsPerPage { get; set; } = 25;
+
+    /// <summary>
+    /// Página atual.
+    /// </summary>
+    [Parameter]
+    public int CurrentPage { get; set; } = 1;
+
+    /// <summary>
+    /// Callback acionado ao trocar de página.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+}

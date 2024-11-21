@@ -1,0 +1,67 @@
+﻿@if (TotalPages > 1)
+{
+    <nav aria-label="Navegação de página">
+        <ul class="pagination">
+            <!-- Botão "Anterior" -->
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => NavigateToPage(CurrentPage - 1)">Anterior</button>
+            </li>
+
+            <!-- Números das páginas -->
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                var pageNumber = i;
+                <!-- Captura o valor atual de i -->
+                <li class="page-item @(pageNumber == CurrentPage ? "active" : "")">
+                    <button class="page-link" @onclick="(() => NavigateToPage(pageNumber))">@pageNumber</button>
+                </li>
+            }
+
+            <!-- Botão "Próximo" -->
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => NavigateToPage(CurrentPage + 1)">Próximo</button>
+            </li>
+        </ul>
+    </nav>
+}
+
+@code {
+    /// <summary>
+    /// Total de itens na tabela.
+    /// </summary>
+    [Parameter]
+    public int TotalItems { get; set; }
+
+    /// <summary>
+    /// Número de itens por página.
+    /// </summary>
+    [Parameter]
+    public int ItemsPerPage { get; set; }
+
+    /// <summary>
+    /// Página atual.
+    /// </summary>
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    /// <summary>
+    /// Callback acionado ao trocar de página.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+    // Calcula o número total de páginas
+    private int TotalPages => (int)Math.Ceiling((double)TotalItems / ItemsPerPage);
+
+    // Navega para a página especificada
+    private async Task NavigateToPage(int page)
+    {
+        // Validação: evita navegar para páginas inválidas
+        if (page < 1 || page > TotalPages)
+            return;
+
+        // Atualiza a página atual e chama o callback
+        CurrentPage = page;
+        await OnPageChanged.InvokeAsync(page);
+    }
+}

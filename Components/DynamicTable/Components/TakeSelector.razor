@@ -1,0 +1,29 @@
+﻿<div class="row mb-3">
+    <div class="col-md-1">
+        <InputSelect class="form-select"
+                     ValueExpression="@(()=>SelectedValue)"
+                     Value="@SelectedValue"
+                     ValueChanged="@((int value) => OnValueChanged(value))">
+            <option value="1">1</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </InputSelect>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int SelectedValue { get; set; }
+
+    [Parameter]
+    public EventCallback<int> SelectedValueChanged { get; set; }
+
+    private async Task OnValueChanged(int value)
+    {
+        // Assign the selected value to the Model
+        SelectedValue = value;
+        await SelectedValueChanged.InvokeAsync(SelectedValue);
+    }
+}

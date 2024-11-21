@@ -1,0 +1,51 @@
+﻿@page "/categories/delete/{id:int}"
+
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<h1>Excluir - @Model.Title</h1>
+
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label for="@Model.Title" class="col-form-label">Título</label>
+            <InputText @bind-Value="Model.Title" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-secondary" onclick="@(() => NavigateBack())">Voltar</button>
+        </div>        
+        <div class="col-md-6 d-flex justify-content-end">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; } = 0;
+    public Category Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cat = await Context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+        if (cat is not null)
+            Model = cat;
+    }
+
+    public async Task OnValidSubmitAsync()
+    {
+        Context.Categories.Remove(Model);
+        await Context.SaveChangesAsync();
+        NavigateBack();
+    }
+
+    public void NavigateBack()
+    {
+        Navigation.NavigateTo("categories");
+    }
+}

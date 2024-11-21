@@ -1,0 +1,99 @@
+﻿@typeparam T where T : class
+
+<div>
+    <!-- Selector para itens por página -->
+    <TakeSelector SelectedValue="ItemsPerPage" SelectedValueChanged="OnTakeChange" />
+    @* <TakeSelector SelectedValue="ItemsPerPage" SelectedValueChanged="OnTakeChange" /> *@
+
+    <!-- Tabela -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                @foreach (var column in Data.Columns)
+                {
+                    <th>@column.Header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Data.Items.Any())
+            {
+                <tr>
+                    <td class="text-center" colspan="@Data.Columns.Count">Não há registros no momento.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Data.Items)
+                {
+                    <tr class="text-center align-middle">
+                        @foreach (var column in Data.Columns)
+                        {
+                            if (column.Render is not null)
+                            {
+                                <td>@column.Render(item)</td>
+                            }                            
+                            else
+                            {
+                                <td>@column.RenderFragment(item)</td>
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Rodapé da tabela com paginação -->
+    <TableFooter ElementName="@ElementName" Start="@Start" End="@End" TotalItems="@Data.TotalItems"
+                 ItemsPerPage="@ItemsPerPage" CurrentPage="@CurrentPage" OnPageChanged="OnPageChange" />
+</div>
+
+@code {
+    /// <summary>
+    /// Nome do tipo de elemento exibido na tabela.
+    /// </summary>
+    [Parameter]
+    public string ElementName { get; set; } = "elementos";
+
+    /// <summary>
+    /// Recebe os dados a serem colocados na tabela e os elementos de paginação.
+    /// </summary>
+    [Parameter]
+    public TableResult<T> Data { get; set; }
+
+    /// <summary>
+    /// Quantidade de itens por página.
+    /// </summary>
+    [Parameter]
+    public int ItemsPerPage { get; set; } = 10;
+
+    /// <summary>
+    /// Página atual.
+    /// </summary>
+    [Parameter]
+    public int CurrentPage { get; set; } = 1;
+
+    /// <summary>
+    /// Início dos itens exibidos na página atual.
+    /// </summary>
+    private int Start => (CurrentPage - 1) * ItemsPerPage + 1;
+
+    /// <summary>
+    /// Fim dos itens exibidos na página atual.
+    /// </summary>
+    private int End => Math.Min(CurrentPage * ItemsPerPage, Data.TotalItems);
+
+    /// <summary>
+    /// Callback acionado ao mudar a página.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnTakeChange { get; set; }
+
+    /// <summary>
+    /// Callback acionado ao mudar a página.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnPageChange { get; set; }
+
+}

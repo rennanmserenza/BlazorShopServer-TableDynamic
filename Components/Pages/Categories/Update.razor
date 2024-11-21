@@ -1,0 +1,56 @@
+﻿@page "/categories/edit/{id:int}"
+
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<h1>Editar - @Model.Title</h1>
+
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary /> <!-- Gera uma lista de validações dos campos do formulário. -->
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label for="@Model.Title" class="col-form-label">Título</label>
+            <InputText @bind-Value="Model.Title" class="form-control" />
+            <ValidationMessage For="@(() => Model.Title)"/> <!-- Exibe apenas a validação do campo -->
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-secondary" onclick="@(() => NavigateBack())">Voltar</button>
+            <button type="reset" class="btn btn-danger">Limpar</button>
+        </div>        
+        <div class="col-md-6 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; } = 0;
+    public Category Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cat = await Context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+        if (cat is not null)
+            Model = cat;
+    }
+
+    public async Task OnValidSubmitAsync()
+    {
+        Context.Categories.Update(Model);
+        await Context.SaveChangesAsync();
+        NavigateBack();
+    }
+
+    public void NavigateBack()
+    {
+        Navigation.NavigateTo("categories");
+    }
+}
