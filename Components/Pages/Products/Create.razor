@@ -5,6 +5,8 @@
 
 @rendermode InteractiveServer
 
+@attribute [Authorize]
+
 <h1>Novo Produto</h1>
 
 <EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
@@ -43,7 +45,6 @@
                     <option value="@category.Id">@category.Title</option>  <!-- Exibe o ID e nome da categoria -->
                 }
             </InputSelect>
-            <ValidationMessage For="@(() => Model.CategoryId)" /> <!-- Exibe apenas a validação do campo -->
         </div>
     </div>
 
@@ -64,7 +65,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = await Context.Categories.AsNoTracking().ToListAsync();
+        _categories = await Context.Categories.AsNoTracking().OrderBy(x => x.Title).ToListAsync();
     }
 
     public async Task OnValidSubmitAsync()

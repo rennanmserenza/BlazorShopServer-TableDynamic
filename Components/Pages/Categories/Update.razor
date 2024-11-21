@@ -5,6 +5,8 @@
 
 @rendermode InteractiveServer
 
+@attribute [Authorize]
+
 <h1>Editar - @Model.Title</h1>
 
 <EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">

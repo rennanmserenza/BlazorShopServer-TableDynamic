@@ -5,6 +5,8 @@
 
 @rendermode InteractiveServer
 
+@attribute [Authorize]
+
 <h1>Excluir - @Model.Title</h1>
 
 <EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
